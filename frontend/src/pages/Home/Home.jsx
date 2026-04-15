@@ -4,12 +4,12 @@ import Header from '../../components/Header/Header'
 import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
 const Home = () => {
-    const [Category, setCategory] = useState("ALL")
+    const [category, setCategory] = useState("All")
     return (
         <div>
             <Header />
-            <ExploreMenu Category={Category} setCategory={setCategory} />
-            <FoodDisplay Category={Category} />
+            <ExploreMenu category={category} setCategory={setCategory} />
+            <FoodDisplay category={category} />
         </div>
     )
 }
