@@ -25,3 +25,7 @@ app.get("/",(req ,res)=>{
 app.listen(port,()=>{
     console.log(`Server Started on http://localhost:${port}`)
 })
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3683f2c585866e77023ddb32bc38ac3694fa362b
