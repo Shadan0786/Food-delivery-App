@@ -1,16 +1,29 @@
 import React from 'react'
 import Navbar from './components/Navbar/Navbar'
 import Sidebar from './components/Sidebar/Sidebar'
+import Add from './pages/Add/Add'
+import List from './pages/List/List'
+import Orders from './pages/Orders/Orders'
+import { Routes, Route } from 'react-router'
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const App = () => {
   return (
     <div>
-      <Navbar/>
+      <ToastContainer/>
+      <Navbar />
       <hr />
       <div className="app-content">
-        <Sidebar/>
-      </div>
-    </div>
+        <Sidebar />
+        <Routes>
+          <Route path="/add" element={<Add />} />
+          <Route path="/list" element={<List />} />
+          <Route path="/Orders" element={<Orders />} />
+
+        </Routes>
+      </div >
+    </div >
   )
 }
 

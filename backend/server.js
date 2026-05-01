@@ -1,11 +1,15 @@
 import express from "express"
 import cors from "cors"
+import dotenv from "dotenv"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/FoodRoute.js"
 
+// 🔥 load env variables
+dotenv.config()
+
 //config
 const app = express()
-const port = 4000
+const port = process.env.PORT || 4000   // ✅ use env
 
 //middleware
 app.use(express.json())
@@ -15,17 +19,13 @@ app.use(cors())
 connectDB();
 
 //api endpoints
-app.use("/api/food" , foodRouter)
-app.use("/images",express.static('uploads'))
+app.use("/api/food", foodRouter)
+app.use("/images", express.static('uploads'))
 
-app.get("/",(req ,res)=>{
+app.get("/", (req, res) => {
     res.send("API working")
 })
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`Server Started on http://localhost:${port}`)
 })
-<<<<<<< HEAD
-=======
-
->>>>>>> 3683f2c585866e77023ddb32bc38ac3694fa362b
