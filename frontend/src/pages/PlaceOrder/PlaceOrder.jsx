@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
 
@@ -26,7 +27,6 @@ const PlaceOrder = () => {
   })
 
   const onChangeHandler = (event) => {
-
     const name = event.target.name
     const value = event.target.value
 
@@ -43,32 +43,20 @@ const PlaceOrder = () => {
     let orderItems = []
 
     food_list.forEach((item) => {
-
-      if (
-        item?._id &&
-        cartItem?.[item._id] > 0
-      ) {
+      if (item?._id && cartItem?.[item._id] > 0) {
 
         let itemInfo = { ...item }
 
-        itemInfo.quantity =
-          cartItem[item._id]
+        itemInfo.quantity = cartItem[item._id]
 
         orderItems.push(itemInfo)
       }
     })
 
     let orderData = {
-
-      userId:
-        localStorage.getItem("userId"),
-
       items: orderItems,
-
       address: data,
-
-      amount:
-        getTotalCartAmount() + 2,
+      amount: getTotalCartAmount() + 2,
     }
 
     try {
@@ -78,7 +66,7 @@ const PlaceOrder = () => {
         orderData,
         {
           headers: {
-            token,
+            token
           }
         }
       )
@@ -88,62 +76,36 @@ const PlaceOrder = () => {
         const order = response.data.order
 
         const options = {
-
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
           amount: order.amount,
-
           currency: order.currency,
-
           name: "Food Delivery",
-
-          description:
-            "Food Order Payment",
-
+          description: "Food Order Payment",
           order_id: order.id,
 
-          handler: async function (
-            responseData
-          ) {
+          handler: async function (responseData) {
 
-            const verifyResponse =
-              await axios.post(
-                url + "/api/order/verify",
-                {
-                  ...responseData,
-                  orderId:
-                    response.data.orderId,
-                },
-                {
-                  headers: { token }
-                }
-              )
+            const verifyResponse = await axios.post(
+              url + "/api/order/verify",
+              {
+                ...responseData,
+                orderId: response.data.orderId,
+              },
+              {
+                headers: { token }
+              }
+            )
 
-            if (
-              verifyResponse.data.success
-            ) {
-
-              alert(
-                "Payment Successful"
-              )
-
+            if (verifyResponse.data.success) {
+              alert("Payment Successful")
             } else {
-
-              alert(
-                "Payment Failed"
-              )
+              alert("Payment Failed")
             }
           },
 
           prefill: {
-
-            name:
-              data.firstName +
-              " " +
-              data.lastName,
-
+            name: data.firstName + " " + data.lastName,
             email: data.email,
-
             contact: data.phone,
           },
 
@@ -152,14 +114,11 @@ const PlaceOrder = () => {
           },
         }
 
-        const razorpay =
-          new window.Razorpay(options)
+        const razorpay = new window.Razorpay(options)
 
         razorpay.open()
 
       } else {
-
-        console.log(response.data)
 
         alert(response.data.message)
       }
@@ -172,8 +131,17 @@ const PlaceOrder = () => {
     }
   }
 
-  return (
+  const navigate = useNavigate()
 
+  useEffect(()=>{
+    if (!token) {
+      navigate('/cart')
+    }else if(getTotalCartAmount()=== 0){
+      navigate('/cart')
+    }
+  },[token])
+
+  return (
     <form
       className="place-order"
       onSubmit={placeOrder}
@@ -181,12 +149,9 @@ const PlaceOrder = () => {
 
       <div className="place-order-left">
 
-        <p className='title'>
-          Delivery Information
-        </p>
+        <p className='title'>Delivery Information</p>
 
         <div className="multi-fields">
-
           <input
             required
             name='firstName'
@@ -204,7 +169,6 @@ const PlaceOrder = () => {
             type="text"
             placeholder='Last Name'
           />
-
         </div>
 
         <input
@@ -226,7 +190,6 @@ const PlaceOrder = () => {
         />
 
         <div className="multi-fields">
-
           <input
             required
             name='city'
@@ -244,11 +207,9 @@ const PlaceOrder = () => {
             type="text"
             placeholder='State'
           />
-
         </div>
 
         <div className="multi-fields">
-
           <input
             required
             name='zipcode'
@@ -266,7 +227,6 @@ const PlaceOrder = () => {
             type="text"
             placeholder='Country'
           />
-
         </div>
 
         <input
@@ -291,47 +251,26 @@ const PlaceOrder = () => {
             <div>
 
               <div className="cart-total-details">
-
                 <p>Subtotal</p>
-
-                <p>
-                  ${getTotalCartAmount()}
-                </p>
-
+                <p>${getTotalCartAmount()}</p>
               </div>
 
               <hr />
 
               <div className="cart-total-details">
-
                 <p>Delivery Fee</p>
-
-                <p>
-                  $
-                  {
-                    getTotalCartAmount() === 0
-                      ? 0
-                      : 2
-                  }
-                </p>
-
+                <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
               </div>
 
               <hr />
 
               <div className="cart-total-details">
-
                 <b>Total</b>
-
                 <b>
-                  $
-                  {
-                    getTotalCartAmount() === 0
-                      ? 0
-                      : getTotalCartAmount() + 2
-                  }
+                  ${getTotalCartAmount() === 0
+                    ? 0
+                    : getTotalCartAmount() + 2}
                 </b>
-
               </div>
 
             </div>

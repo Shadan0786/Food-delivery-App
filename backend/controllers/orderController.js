@@ -26,8 +26,8 @@ export const placeOrder = async (req, res) => {
 
     const order = await razorpay.orders.create(options);
     console.log(process.env.RAZORPAY_KEY_ID);
-console.log(process.env.RAZORPAY_KEY_SECRET);
-console.log(order);
+    console.log(process.env.RAZORPAY_KEY_SECRET);
+    console.log(order);
 
     res.json({
       success: true,
@@ -103,5 +103,65 @@ export const verifyOrder = async (req, res) => {
       success: false,
       message: "Error",
     });
+  }
+};
+
+export const userOrders = async(req,res)=>{
+try {
+  const orders = await OrderModel.find({userId:req.body.userId})
+  res.json({success:true,data:orders})
+} catch (error) {
+  console.log(error);
+  res.json({success:false,message:"Error"})
+}
+}
+
+//listing orders for admin panel
+export const listOrders = async (req, res) => {
+  try {
+
+    const orders = await OrderModel.find({});
+
+    res.json({
+      success: true,
+      data: orders
+    });
+
+  } catch (error) {
+
+    console.log("LIST ORDERS ERROR:", error);
+
+    res.json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+export const updateStatus = async (req, res) => {
+
+  try {
+
+    await OrderModel.findByIdAndUpdate(
+      req.body.orderId,
+      {
+        status: req.body.status
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Status Updated"
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.json({
+      success: false,
+      message: "Error"
+    });
+
   }
 };
